@@ -1,0 +1,67 @@
+const readline = require('readline');
+
+// Налаштування для взаємодії з користувачем через консоль
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+// Реалізація сортування (пузирковий метод)
+function customSort(arr, sortOrder) {
+    let isSorted = false;
+    let lastUnsorted = arr.length - 1;
+
+    while (!isSorted) {
+        isSorted = true; // Припускаємо, що сортування завершене
+        let newLastUnsorted = 0;
+
+        for (let i = 0; i < lastUnsorted; i++) {
+            const shouldSwap =
+                (sortOrder === 'asc' && arr[i] > arr[i + 1]) ||
+                (sortOrder === 'desc' && arr[i] < arr[i + 1]);
+
+            if (shouldSwap) {
+                // Обмін значень місцями
+                [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+                isSorted = false;
+                newLastUnsorted = i;
+            }
+        }
+
+        lastUnsorted = newLastUnsorted; // Оновлення межі для наступного циклу
+    }
+
+    return arr;
+}
+
+// Функція для отримання введення користувача
+function getInputAndSort() {
+    rl.question('Введіть числа через кому (наприклад: 5, 3, 8, 1): ', (input) => {
+        const numbers = input.split(',').map(num => Number(num.trim())); // Перетворення введення на масив чисел
+
+        rl.question(
+            'Оберіть варіант сортування:\n1. За зростанням\n2. За спаданням\n3. Обидва варіанти\nВаш вибір (1, 2 або 3): ',
+            (choice) => {
+                switch (choice) {
+                    case '1': // Сортування за зростанням
+                        console.log('Відсортовано за зростанням:', customSort([...numbers], 'asc'));
+                        break;
+                    case '2': // Сортування за спаданням
+                        console.log('Відсортовано за спаданням:', customSort([...numbers], 'desc'));
+                        break;
+                    case '3': // Сортування в обох напрямах
+                        console.log('Відсортовано за зростанням:', customSort([...numbers], 'asc'));
+                        console.log('Відсортовано за спаданням:', customSort([...numbers], 'desc'));
+                        break;
+                    default:
+                        console.log('Невірний вибір. Будь ласка, оберіть 1, 2 або 3.');
+                }
+
+                rl.close(); // Завершення сеансу
+            }
+        );
+    });
+}
+
+// Виклик функції для запуску програми
+getInputAndSort();
